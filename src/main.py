@@ -1,7 +1,7 @@
 from textnode import *
 
 def main():
-    temp = TextNode("poop", "bold", "https://boot.dev")
+    temp = TextNode("poop", TextType.BOLD, "https://boot.dev")
     print(temp)
 
 main()

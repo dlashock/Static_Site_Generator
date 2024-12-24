@@ -11,26 +11,12 @@ class TextType(Enum):
 class TextNode:
     def __init__(self, text, text_type, url=None):
         self.text = text
-        
-        match text_type:
-            case "normal" | TextType.NORMAL:
-                self.text_type = TextType.NORMAL
-            case "bold" | TextType.BOLD:
-                self.text_type = TextType.BOLD
-            case "italic" | TextType.ITALIC:
-                self.text_type = TextType.ITALIC
-            case "code" | TextType.CODE:
-                self.text_type = TextType.CODE
-            case "links" | TextType.LINKS:
-                self.text_type = TextType.LINKS
-            case "images" | TextType.IMAGES:
-                self.text_type = TextType.IMAGES
-            case _:
-                raise Exception("Invalid text type")
-
+        self.text_type = text_type
         self.url = url
 
     def __eq__(self, other):
+        if not isinstance(other, TextNode):
+            return NotImplemented
         return  (self.text == other.text and 
                 self.text_type == other.text_type and
                 self.url == other.url)
