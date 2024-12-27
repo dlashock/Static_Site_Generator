@@ -14,7 +14,7 @@ class HTMLNode:
     def props_to_html(self):
         result = ""
 
-        if self.props != None:
+        if self.props is not None:
             for key, value in self.props.items():
                 result += f' {key}="{value}"'
         
@@ -23,7 +23,7 @@ class HTMLNode:
     
 class LeafNode(HTMLNode):
     def __init__(self, tag, value, children=None, props=None):
-        if children != None:
+        if children is not None:
             raise ValueError("LeafNode cannot have children")
         super().__init__(tag, value, None, props)
 
@@ -31,25 +31,19 @@ class LeafNode(HTMLNode):
         return f"LeafNode({self.tag}, {self.value}, {self.props})"
     
     def to_html(self):
-        if self.value == None:
+        if self.value is None:
             raise ValueError("All leaf node must have a value")
-        if self.tag == None:
+        if self.tag is None:
             return self.value
-        if self.props == None:
-            return f"<{self.tag}>{self.value}</{self.tag}>"
 
-        props_string = ""
-        for key, value in self.props.items():
-            props_string += f' {key}="{value}"'
-
-        return f"<{self.tag}{props_string}>{self.value}</{self.tag}>"
+        return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
     
 
 class ParentNode(HTMLNode):
     def __init__(self, tag, children, props=None):
-        if children == None:
+        if children is None:
             raise ValueError("Parent Nodes must have children")
-        if tag == None:
+        if tag is None:
             raise ValueError("Parent Nodes must have")
         super().__init__(tag, None, children, props)
 
@@ -57,20 +51,14 @@ class ParentNode(HTMLNode):
         return f'ParentNode(Tag:{self.tag}, Children:{self.children}, Props:{self.props})'
     
     def to_html(self):
-        if self.tag == None:
+        if self.tag is None:
             raise ValueError("Parent Nodes must have tags")
-        if self.children == None:
+        if self.children is None:
             raise ValueError("Parent nodes must have children")
         
         child_string = ""
         for child in self.children:
             child_string += child.to_html()
 
-        if self.props == None:
-            return f"<{self.tag}>{child_string}</{self.tag}>"
         
-        props_string = ""
-        for key, value in self.props.items():
-            props_string += f' {key}="{value}"'
-        
-        return f"<{self.tag}{props_string}>{child_string}</{self.tag}>"
+        return f"<{self.tag}{self.props_to_html()}>{child_string}</{self.tag}>"
