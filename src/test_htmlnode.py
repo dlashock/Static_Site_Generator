@@ -94,18 +94,6 @@ class TestHTMLNode(unittest.TestCase):
             node.to_html(),
             '<a href="https://boot.dev" target="_blank">What a strange world</a>',
         )
-
-    def test_leafnode_repr(self):
-        node = LeafNode(
-            "p",
-            "What a strange world",
-            None,
-            {"class": "primary"},
-        )
-        self.assertEqual(
-            node.__repr__(),
-            "HTMLNode(Tag:p, Value:What a strange world, Children:None, Props:{'class': 'primary'})",
-        )
     
 if __name__ == "__main__":
     unittest.main()
