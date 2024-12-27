@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -94,6 +94,40 @@ class TestHTMLNode(unittest.TestCase):
             node.to_html(),
             '<a href="https://boot.dev" target="_blank">What a strange world</a>',
         )
-    
+
+    def test_parentnode_to_html(self):
+        node = ParentNode(
+            "p",
+            [
+                LeafNode("b", "Bold text"),
+                LeafNode(None, "Normal text"),
+                LeafNode("i", "italic text"),
+                LeafNode(None, "Normal text"),
+            ],
+        )
+        expected_result = '<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>'
+        self.assertEqual(node.to_html(), expected_result)
+
+    def test_nested_parents(self):
+        node = ParentNode(
+            "a",
+            [
+                ParentNode("x",
+                            [
+                                LeafNode("b", "Bold text"),
+                                LeafNode(None, "Normal text")
+                            ]
+                ),
+                LeafNode("i", "italic text"),            ],
+            {
+                "href": "https://google.com",
+                "target": "_blank"
+            }
+        )
+        expected_result = '<a href="https://google.com" target="_blank"><x><b>Bold text</b>Normal text</x><i>italic text</i></a>'
+        self.assertEqual(node.to_html(), expected_result)
+
+    def test_parent_
+
 if __name__ == "__main__":
     unittest.main()
