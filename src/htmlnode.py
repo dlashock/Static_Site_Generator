@@ -22,9 +22,7 @@ class HTMLNode:
     
     
 class LeafNode(HTMLNode):
-    def __init__(self, tag, value, children=None, props=None):
-        if children is not None:
-            raise ValueError("LeafNode cannot have children")
+    def __init__(self, tag, value, props=None):
         super().__init__(tag, value, None, props)
 
     def __repr__(self):

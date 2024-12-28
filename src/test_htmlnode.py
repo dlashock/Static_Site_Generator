@@ -60,7 +60,6 @@ class TestHTMLNode(unittest.TestCase):
         node = LeafNode(
             "p",
             "What a strange world",
-            None,
             {"href": "https://boot.dev"}
         )
         self.assertEqual(
@@ -80,7 +79,6 @@ class TestHTMLNode(unittest.TestCase):
         node = LeafNode(
             "a",
             "What a strange world",
-            None,
             {"href": "https://boot.dev"}
         )
         self.assertEqual(
@@ -92,7 +90,6 @@ class TestHTMLNode(unittest.TestCase):
         node = LeafNode(
             "a",
             "What a strange world",
-            None,
             {"href": "https://boot.dev",
              "target": "_blank"}
         )
@@ -106,7 +103,6 @@ class TestHTMLNode(unittest.TestCase):
         self.assertEqual(node.to_html(), "Hello, world!")
 
     
-
     '''
     ---------------------------------------------------------------------
                     ParentNode Class Testing
