@@ -1,7 +1,7 @@
 import unittest
 
 from textnode import TextNode, TextType, text_node_to_html_node
-from splitnode import split_nodes_delimiter
+from inline_markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 
 class TestSplitNode(unittest.TestCase):
     def test_valid_split(self):
@@ -136,8 +136,26 @@ class TestSplitNode(unittest.TestCase):
             new_nodes,
         )
 
+class TestMarkdownLinksAndImages(unittest.TestCase):
+    def test_multiple_images(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        expected_result = [('rick roll', 'https://i.imgur.com/aKaOqIh.gif'), ('obi wan', 'https://i.imgur.com/fJRm4Vk.jpeg')]
+        self.assertListEqual(extract_markdown_images(text), expected_result)
 
+    def test_multiple_links(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        expected_result = [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
+        self.assertListEqual(extract_markdown_links(text), expected_result)
 
+    def test_image_with_link(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) image and link [to youtube](https://www.youtube.com/@bootdotdev)"
+        expected_result = [('rick roll', 'https://i.imgur.com/aKaOqIh.gif')]
+        self.assertListEqual(extract_markdown_images(text), expected_result)
+
+    def test_image_with_link(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) image and link [to youtube](https://www.youtube.com/@bootdotdev)"
+        expected_result = [("to youtube", "https://www.youtube.com/@bootdotdev")]
+        self.assertListEqual(extract_markdown_links(text), expected_result)
 
 if __name__ == "__main__":
     unittest.main()

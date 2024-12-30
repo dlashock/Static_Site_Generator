@@ -1,15 +1,9 @@
 from textnode import TextNode, TextType
 from htmlnode import HTMLNode, LeafNode, ParentNode
-from splitnode import split_nodes_delimiter
+from inline_markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 
 def main():
-    pass
-    node = TextNode("This **is** a text node", TextType.TEXT)
-    node2 = TextNode("**This** is a text *node*", TextType.TEXT)
-    node_list = [node, node2]
-    node_list = split_nodes_delimiter(node_list, "**", TextType.BOLD)
-    node_list = split_nodes_delimiter(node_list, "*", TextType.ITALIC)
-    for node in node_list:
-        print(f"This is a node: {node}")
+    text3 = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) image and link [to youtube](https://www.youtube.com/@bootdotdev)"
+    print(extract_markdown_links(text3))
 
 main()
