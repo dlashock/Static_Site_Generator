@@ -36,17 +36,17 @@ class TestSplitNode(unittest.TestCase):
 
     def test_invalid_markdown_syntax(self):
         nodes = [TextNode("Hello **World", TextType.TEXT)]
-        with self.assertRaisesRegex(Exception, "Invalid Markdown Syntax. Missing delimiter: \*\*"): #Check the exception message
+        with self.assertRaisesRegex(Exception, "Invalid Markdown Syntax. Section not closed"): #Check the exception message
             split_nodes_delimiter(nodes, "**", TextType.BOLD)
 
     def test_invalid_markdown_syntax_2(self):
         nodes = [TextNode("Hello *World", TextType.TEXT)]
-        with self.assertRaisesRegex(Exception, "Invalid Markdown Syntax. Missing delimiter: *"): #Check the exception message
+        with self.assertRaisesRegex(Exception, "Invalid Markdown Syntax. Section not closed"): #Check the exception message
             split_nodes_delimiter(nodes, "*", TextType.ITALIC)
 
     def test_invalid_markdown_syntax_3(self):
         nodes = [TextNode("Hello'", TextType.TEXT)]
-        with self.assertRaisesRegex(Exception, "Invalid Markdown Syntax. Missing delimiter: '"): #Check the exception message
+        with self.assertRaisesRegex(Exception, "Invalid Markdown Syntax. Section not closed"): #Check the exception message
             split_nodes_delimiter(nodes, "'", TextType.CODE)
 
     def test_splitnode_bold_and_italic_values(self):
