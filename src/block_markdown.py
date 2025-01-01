@@ -1,4 +1,6 @@
 import re
+from htmlnode import HTMLNode, LeafNode, ParentNode
+
 
 def markdown_to_blocks(markdown):
     split_text = markdown.split("\n\n")
@@ -67,3 +69,19 @@ def is_ordered_list(text):
         if current_list_pos < len(split_text):
             current_list_pos += 1
     return valid
+
+def markdown_to_html_node(markdown):
+    blocks = markdown_to_blocks(markdown)
+    for block in blocks:
+        block_type = block_to_block_type(block)
+        match block_type:
+            case "paragraph":
+                node = HTMLNode("<p>", block, None, None)
+            case "heading":
+                
+            case "code":
+            case "quote":
+            case "unordered_list":
+            case "ordered_list":
+            case _:
+                raise Exception("Invalid block type detected")
