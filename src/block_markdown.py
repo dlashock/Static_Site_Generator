@@ -1,5 +1,6 @@
 import re
 from htmlnode import HTMLNode, LeafNode, ParentNode
+from inline_markdown import text_to_textnodes, TextNode, TextType
 
 
 def markdown_to_blocks(markdown):
@@ -78,10 +79,27 @@ def markdown_to_html_node(markdown):
             case "paragraph":
                 node = HTMLNode("<p>", block, None, None)
             case "heading":
-                
+                if bool(re.match(r"^#{1} (?![#])", block)):
+                    node = HTMLNode("<h1>", block, None, None)
+                elif bool(re.match(r"^#{2} (?![#])", block)):
+                    node = HTMLNode("<h2>", block, None, None)
+                elif bool(re.match(r"^#{3} (?![#])", block)):
+                    node = HTMLNode("<h3>", block, None, None)
+                elif bool(re.match(r"^#{4} (?![#])", block)):
+                    node = HTMLNode("<h4>", block, None, None)
+                elif bool(re.match(r"^#{5} (?![#])", block)):
+                    node = HTMLNode("<h5>", block, None, None)
+                elif bool(re.match(r"^#{6} (?![#])", block)):
+                    node = HTMLNode("<h6>", block, None, None)
+                else:
+                    raise Exception("Heading node not properly formatted")
             case "code":
+                node = HTMLNode("<code>", block, None, None)
             case "quote":
+                node = HTMLNode("<blockquote>", block, None, None)
             case "unordered_list":
+                node = HTMLNode("<ul>", None, None)
             case "ordered_list":
+                node = HTMLNode("<ol>", block, None, None)
             case _:
                 raise Exception("Invalid block type detected")

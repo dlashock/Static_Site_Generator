@@ -42,7 +42,7 @@ class ParentNode(HTMLNode):
         if children is None:
             raise ValueError("Parent Nodes must have children")
         if tag is None:
-            raise ValueError("Parent Nodes must have")
+            raise ValueError("Parent Nodes must have tags")
         super().__init__(tag, None, children, props)
 
     def __repr__(self):
