@@ -1,6 +1,7 @@
 import re
 from htmlnode import HTMLNode, LeafNode, ParentNode
 from inline_markdown import text_to_textnodes, TextNode, TextType
+from textnode import text_node_to_html_node, TextNode
 
 
 def markdown_to_blocks(markdown):
@@ -73,11 +74,13 @@ def is_ordered_list(text):
 
 def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown)
+    body = []
     for block in blocks:
         block_type = block_to_block_type(block)
         match block_type:
             case "paragraph":
-                node = HTMLNode("<p>", block, None, None)
+                children = text_to_children(block)
+                node = HTMLNode("<p>", None, children, None)
             case "heading":
                 if bool(re.match(r"^#{1} (?![#])", block)):
                     node = HTMLNode("<h1>", block, None, None)
@@ -98,8 +101,15 @@ def markdown_to_html_node(markdown):
             case "quote":
                 node = HTMLNode("<blockquote>", block, None, None)
             case "unordered_list":
-                node = HTMLNode("<ul>", None, None)
+                node = HTMLNode("<ul>", block, None, None)
             case "ordered_list":
                 node = HTMLNode("<ol>", block, None, None)
             case _:
                 raise Exception("Invalid block type detected")
+            
+def text_to_children(text):
+    children = text_to_textnodes(text)
+    html_children = []
+    for child in children:
+        html_children.append(text_node_to_html_node(child))
+    return html_children
