@@ -107,9 +107,10 @@ def markdown_to_html_node(markdown):
             case _:
                 raise Exception("Invalid block type detected")
             
-def text_to_children(text):
+def text_to_children(text, block_type):
     children = text_to_textnodes(text)
     html_children = []
     for child in children:
-        html_children.append(text_node_to_html_node(child))
+        child = text_node_to_html_node(child)
+        html_children.append(child)
     return html_children
