@@ -1,7 +1,7 @@
 import re
-from htmlnode import HTMLNode, LeafNode, ParentNode
-from inline_markdown import text_to_textnodes, TextNode, TextType
-from textnode import text_node_to_html_node, TextNode
+from htmlnode import ParentNode
+from inline_markdown import text_to_textnodes
+from textnode import text_node_to_html_node
 
 
 def markdown_to_blocks(markdown):
@@ -74,43 +74,85 @@ def is_ordered_list(text):
 
 def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown)
-    body = []
+    body = ParentNode("div", [], None)
     for block in blocks:
         block_type = block_to_block_type(block)
         match block_type:
             case "paragraph":
-                children = text_to_children(block)
-                node = HTMLNode("<p>", None, children, None)
+                node = create_paragraph_node(block)
             case "heading":
-                if bool(re.match(r"^#{1} (?![#])", block)):
-                    node = HTMLNode("<h1>", block, None, None)
-                elif bool(re.match(r"^#{2} (?![#])", block)):
-                    node = HTMLNode("<h2>", block, None, None)
-                elif bool(re.match(r"^#{3} (?![#])", block)):
-                    node = HTMLNode("<h3>", block, None, None)
-                elif bool(re.match(r"^#{4} (?![#])", block)):
-                    node = HTMLNode("<h4>", block, None, None)
-                elif bool(re.match(r"^#{5} (?![#])", block)):
-                    node = HTMLNode("<h5>", block, None, None)
-                elif bool(re.match(r"^#{6} (?![#])", block)):
-                    node = HTMLNode("<h6>", block, None, None)
-                else:
-                    raise Exception("Heading node not properly formatted")
+                node = parse_header_block(block)
             case "code":
-                node = HTMLNode("<code>", block, None, None)
+                node = create_code_node(block)
             case "quote":
-                node = HTMLNode("<blockquote>", block, None, None)
+                node = create_quote_node(block)
             case "unordered_list":
-                node = HTMLNode("<ul>", block, None, None)
+                node = ulist_to_html_nodes(block)
             case "ordered_list":
-                node = HTMLNode("<ol>", block, None, None)
+                node = olist_to_html_nodes(block)
             case _:
                 raise Exception("Invalid block type detected")
+        body.children.append(node)
+    return body
             
-def text_to_children(text, block_type):
-    children = text_to_textnodes(text)
+def text_to_children(block):
+    children = text_to_textnodes(block)
     html_children = []
     for child in children:
         child = text_node_to_html_node(child)
         html_children.append(child)
     return html_children
+
+def create_paragraph_node(block):
+    lines = block.split("\n")
+    paragraph = " ".join(lines)
+    children = text_to_children(paragraph)
+    return ParentNode("p", children)
+
+def ulist_to_html_nodes(block):
+    parent_node = ParentNode("ul", [])
+    list_items = block.split("\n")
+    for item in list_items:
+        children = text_to_children(item[2:])
+        li_node = ParentNode("li", children)
+        parent_node.children.append(li_node)
+    return parent_node
+
+def olist_to_html_nodes(block):
+    parent_node = ParentNode("ol", [])
+    list_items = block.split("\n")
+    for item in list_items:
+        text = re.sub(r"^\d+\.\s", "", item)
+        children = text_to_children(text)
+        li_node = ParentNode("li", children)
+        parent_node.children.append(li_node)
+    return parent_node
+
+def parse_header_block(block):
+    match = re.match(r"^(#{1,6})\s(?![#])", block)
+    if match:
+        level = len(match.group(1))
+        children = text_to_children(block[level+1:])
+        return ParentNode(f"h{level}", children, None)
+    else:
+        raise ValueError("Invalid header block")
+    
+def create_code_node(block):
+    if not block.startswith("```") or block.endswith("```"):
+        raise ValueError("Invalid code block")
+    text = block[4:-3]
+    children = text_to_children(text)
+    inner_node = ParentNode("code", children)
+    outer_node = ParentNode("pre", [inner_node])
+    return outer_node
+
+def create_quote_node(block):
+    lines = block.split("\n")
+    new_lines = []
+    for line in lines:
+        if not line.startswith(">"):
+            raise ValueError("Invalid quote block")
+        new_lines.append(line.lstrip(">").strip())
+    quote = " ".join(new_lines)
+    children = text_to_children(quote)
+    return ParentNode("blockquote", children)
