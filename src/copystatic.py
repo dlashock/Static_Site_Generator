@@ -52,6 +52,9 @@ def generate_pages_recursively(dir_path_content, template_path, dest_dir_path):
         if file.suffix == ".md":
             generate_page(file, template_path, destination / dest_filename)
         elif file.is_dir():
+<<<<<<< HEAD
             # print(file)
             # print(destination / file.name)
+=======
+>>>>>>> 8336029 (Finished recursive page generation. Project complete!)
             generate_pages_recursively(file, template_path, destination / file.name)
