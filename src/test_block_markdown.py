@@ -1,6 +1,6 @@
 import unittest
 
-from block_markdown import markdown_to_blocks, block_to_block_type, markdown_to_html_node
+from block_markdown import markdown_to_blocks, block_to_block_type, markdown_to_html_node, extract_title
 
 class TestBlockMarkdown(unittest.TestCase):
     def test_markdown_to_blocks(self):
@@ -50,6 +50,17 @@ class TestBlockMarkdown(unittest.TestCase):
             block_to_block_type(unordered_list)
         with self.assertRaisesRegex(Exception, "Quote block not formatted correctly"):
             block_to_block_type(quote)
+
+    def test_extract_h1(self):
+        header = "# This is a test header"
+        header2 = "## This is an improperly formatted H1 header"
+        header3 = "# This is a header with whitespace at the end   "
+        header4 = "This is a test line\n# there is a header here\n##Header not here"
+        self.assertEqual(extract_title(header), "This is a test header")
+        with self.assertRaisesRegex(Exception, "Missing H1 header"):
+            extract_title(header2)
+        self.assertEqual(extract_title(header3), "This is a header with whitespace at the end")
+        self.assertEqual(extract_title(header4), "there is a header here")
 
 class TestMarkdownToHTML(unittest.TestCase):
     def test_paragraph(self):

@@ -136,9 +136,9 @@ def parse_header_block(block):
         return ParentNode(f"h{level}", children, None)
     else:
         raise ValueError("Invalid header block")
-    
+
 def create_code_node(block):
-    if not block.startswith("```") or block.endswith("```"):
+    if not block.startswith("```") or not block.endswith("```"):
         raise ValueError("Invalid code block")
     text = block[4:-3]
     children = text_to_children(text)
@@ -156,3 +156,12 @@ def create_quote_node(block):
     quote = " ".join(new_lines)
     children = text_to_children(quote)
     return ParentNode("blockquote", children)
+
+def extract_title(markdown):
+    lines = markdown.split("\n")
+    for line in lines:
+        header_found = re.match(r"^(#{1})\s(?![#])", line)
+        if header_found:
+            return line[1:].strip()
+    if not header_found:
+        raise Exception("Missing H1 header")
