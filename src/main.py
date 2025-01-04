@@ -16,13 +16,9 @@ def del_all(dir):
         shutil.rmtree(dir)
 
 def main():
-    # if os.path.exists(public_dir_path):
-    #     del_all(public_dir_path)
-    # copy_all(static_dir_path, public_dir_path)
-    # generate_pages_recursively(source_path, template_path, destination_path)
-
-    p = Path(source_path)
-    for file in p.iterdir():
-        print(file)
+    if os.path.exists(public_dir_path):
+        del_all(public_dir_path)
+    copy_all(static_dir_path, public_dir_path)
+    generate_pages_recursively(source_path, template_path, destination_path)
 
 main()
