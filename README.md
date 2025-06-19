@@ -1,0 +1,1 @@
+This project takes Markdown files and automatically generates webpages based on those files. It is fully functional as is, and there is an example of markdown files in the project that will generate pages about Lord of the Rings.
